@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/DomeGym.Domain.UnitTests/">
+    <Project Path="DomeGym.Domain.UnitTests/DomeGym.Domain.UnitTests.csproj" />
+  </Folder>
+  <Folder Name="/DomeGym.Domain/">
+    <Project Path="DomeGym.Domain/DomeGym.Domain.csproj" />
+  </Folder>
+</Solution>
