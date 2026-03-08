@@ -1,4 +1,6 @@
 ﻿
+using ErrorOr;
+
 namespace DomeGym.Domain
 {
     public class Session
@@ -21,17 +23,19 @@ namespace DomeGym.Domain
             _id = id ?? Guid.NewGuid();
         }
 
-        public void CancelReservation(Participant participant, IDateTimeProvider dateTimeProvider)
+        public ErrorOr<Success> CancelReservation(Participant participant, IDateTimeProvider dateTimeProvider)
         {
             if (IsTooCloseToSession(dateTimeProvider.UtcNow))
             {
-                throw new InvalidOperationException("Cannot cancel reservation too close to session");
+                return SessionErrors.CancellationTooCloseToSession;
             }
 
             if (!_participantIds.Remove(participant.Id))
             {
-                throw new InvalidOperationException("Reservation not found");
+                return Error.NotFound(description: "Reservation not found");
             }
+
+            return Result.Success;
         }
 
         private bool IsTooCloseToSession(DateTime utcNow)
@@ -40,14 +44,15 @@ namespace DomeGym.Domain
             return (_date.ToDateTime(_startTime) - utcNow).TotalHours < MinHours;
         }
 
-        public void ReserveSpot(Participant participant)
+        public ErrorOr<Success> ReserveSpot(Participant participant)
         {
             if (_participantIds.Count >= _maxParticipants)
             {
-                throw new InvalidOperationException("Session is full");
+                return SessionErrors.SessionIsFull;
             }
 
             _participantIds.Add(participant.Id);
+            return Result.Success;
         }
     }
 }
