@@ -1,8 +1,9 @@
+using DomeGym.Domain.Common;
 using ErrorOr;
 
 namespace DomeGym.Domain;
 
-public class Participant
+public class Participant : Entity
 {
     private readonly Schedule _schedule = Schedule.Empty();
 
@@ -11,7 +12,7 @@ public class Participant
 
     public Guid Id { get; }
 
-    public Participant(Guid userId, Guid? id = null)
+    public Participant(Guid userId, Guid? id = null): base(id ?? Guid.NewGuid())
     {
         _userId = userId;
         Id = id ?? Guid.NewGuid();
