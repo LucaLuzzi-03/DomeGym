@@ -1,9 +1,8 @@
-﻿
-namespace DomeGym.Domain
+namespace DomeGym.Domain;
+
+public class Admin
 {
-    public class Admin
-    {
-        private readonly Guid _userId;
-        private readonly Guid _subscriptionId;
-    }
+    private readonly Guid _id;
+    private readonly Guid _userId;
+    private readonly Guid _subscriptionId;
 }

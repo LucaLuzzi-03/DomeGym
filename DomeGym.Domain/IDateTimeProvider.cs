@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+namespace DomeGym.Domain;
 
-namespace DomeGym.Domain
+public interface IDateTimeProvider
 {
-    public interface IDateTimeProvider
-    {
-        public DateTime UtcNow { get; }
-    }
+    public DateTime UtcNow { get; }
 }

@@ -1,15 +1,14 @@
-﻿using ErrorOr;
+using ErrorOr;
 
-namespace DomeGym.Domain
+namespace DomeGym.Domain;
+
+public static class SessionErrors
 {
-    public static class SessionErrors
-    {
-        public static readonly Error SessionIsFull = Error.Validation(
-            code: "Session.Full",
-            description: "Session is full");
+    public readonly static Error CannotHaveMoreReservationsThanParticipants = Error.Validation(
+        code: "Session.CannotHaveMoreReservationsThanParticipants",
+        description: "Cannot have more reservations than participants");
 
-        public static readonly Error CancellationTooCloseToSession = Error.Validation(
-            code: "Session.CancellationTooClose",
-            description: "Cancellation is too close to session start time");
-    }
+    public readonly static Error CannotCancelReservationTooCloseToSession = Error.Validation(
+        code: "Session.CannotCancelReservationTooCloseToSession",
+        description: "Cannot cancel reservation too close to session start time");
 }
