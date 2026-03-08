@@ -1,14 +1,16 @@
+using DomeGym.Domain.Common;
+using DomeGym.Domain.Common.Interfaces;
+using DomeGym.Domain.Common.ValueObjects;
+using DomeGym.Domain.ParticipantAggregate;
 using ErrorOr;
 
-namespace DomeGym.Domain;
+namespace DomeGym.Domain.SessionAggregate;
 
-public class Session
+public class Session : AggregateRoot
 {
     private readonly Guid _trainerId;
-    private readonly List<Guid> _participantIds = new();
+    private readonly List<Reservation> _reservations = new();
     private readonly int _maxParticipants;
-
-    public Guid Id { get; }
 
     public DateOnly Date { get; }
 
@@ -19,13 +21,13 @@ public class Session
         TimeRange time,
         int maxParticipants,
         Guid trainerId,
-        Guid? id = null)
+        Guid? id = null) 
+        : base(id ?? Guid.NewGuid())
     {
         Date = date;
         Time = time;
         _maxParticipants = maxParticipants;
         _trainerId = trainerId;
-        Id = id ?? Guid.NewGuid();
     }
 
     public ErrorOr<Success> CancelReservation(Participant participant, IDateTimeProvider dateTimeProvider)
@@ -35,11 +37,13 @@ public class Session
             return SessionErrors.CannotCancelReservationTooCloseToSession;
         }
 
-        if (!_participantIds.Remove(participant.Id))
+        var reservation = _reservations.FirstOrDefault(r => r.ParticipantId == participant.Id);
+        if (reservation is null)
         {
             return Error.NotFound(description: "Participant not found");
         }
 
+        _reservations.Remove(reservation);
         return Result.Success;
     }
 
@@ -52,17 +56,18 @@ public class Session
 
     public ErrorOr<Success> ReserveSpot(Participant participant)
     {
-        if (_participantIds.Count >= _maxParticipants)
+        if (_reservations.Count >= _maxParticipants)
         {
             return SessionErrors.CannotHaveMoreReservationsThanParticipants;
         }
 
-        if (_participantIds.Contains(participant.Id))
+        if (_reservations.Any(r => r.ParticipantId == participant.Id))
         {
             return Error.Conflict(description: "Participants cannot reserve twice to the same session");
         }
 
-        _participantIds.Add(participant.Id);
+        var reservation = new Reservation(participant.Id);
+        _reservations.Add(reservation);
 
         return Result.Success;
     }
