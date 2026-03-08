@@ -1,4 +1,3 @@
-using DomeGym.Domain.Common;
 using ErrorOr;
 using Throw;
 
